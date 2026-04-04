@@ -2,19 +2,89 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Mail, ExternalLink } from 'lucide-react';
 
+const words = ['Network', 'Collaborate', 'Innovate'];
+
+const TypewriterWords = () => {
+  const [currentWordIndex, setCurrentWordIndex] = React.useState(0);
+  const [currentText, setCurrentText] = React.useState('');
+  const [isDeleting, setIsDeleting] = React.useState(false);
+  const [showDot, setShowDot] = React.useState(true);
+  const [started, setStarted] = React.useState(false);
+  const ref = React.useRef(null);
+
+  // Start only when visible
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setStarted(true); },
+      { threshold: 0.5 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // Typewriter logic — type then delete then next word
+  React.useEffect(() => {
+    if (!started) return;
+    const word = words[currentWordIndex];
+
+    if (!isDeleting && currentText.length < word.length) {
+      // Still typing
+      const t = setTimeout(() => {
+        setCurrentText(word.slice(0, currentText.length + 1));
+      }, 100);
+      return () => clearTimeout(t);
+    }
+
+    if (!isDeleting && currentText.length === word.length) {
+      // Finished typing — pause then start deleting
+      const t = setTimeout(() => setIsDeleting(true), 1200);
+      return () => clearTimeout(t);
+    }
+
+    if (isDeleting && currentText.length > 0) {
+      // Deleting
+      const t = setTimeout(() => {
+        setCurrentText(word.slice(0, currentText.length - 1));
+      }, 60);
+      return () => clearTimeout(t);
+    }
+
+    if (isDeleting && currentText.length === 0) {
+      // Move to next word
+      setIsDeleting(false);
+      setCurrentWordIndex(prev => (prev + 1) % words.length);
+    }
+  }, [started, currentText, isDeleting, currentWordIndex]);
+
+  // Blinking dot
+  React.useEffect(() => {
+    const interval = setInterval(() => setShowDot(d => !d), 500);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div ref={ref} className="flex flex-col items-center justify-center min-h-[200px]">
+      <h2
+        style={{
+          fontFamily: "'Söhne', 'ui-sans-serif', 'system-ui', '-apple-system', sans-serif",
+          fontWeight: 700,
+          letterSpacing: '-0.02em',
+        }}
+        className="text-5xl md:text-8xl lg:text-9xl text-white"
+      >
+        {currentText}
+        <span className={`${showDot ? 'opacity-100' : 'opacity-0'} text-white transition-opacity`}>|</span>
+      </h2>
+    </div>
+  );
+};
 const Footer = () => {
     return (
         <footer className="relative py-24 md:py-32 bg-void-black border-t border-hud-cyan/5">
             <div className="container mx-auto px-6">
                 {/* Massive Headline */}
                 <div className="text-center mb-24">
-                    <motion.h2
-                        initial={{ opacity: 0, y: 40 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        className="font-orbitron font-black text-4xl md:text-7xl lg:text-9xl text-white/5 tracking-tighter uppercase select-none"
-                    >
-                        THE SKY IS NOT THE LIMIT.
-                    </motion.h2>
+                    <TypewriterWords />
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-16 mb-24">
