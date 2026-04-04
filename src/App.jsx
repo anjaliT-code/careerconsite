@@ -10,6 +10,8 @@ import Collaborate from './components/Collaborate';
 import Footer from './components/Footer';
 import ParticleBackground from './components/ParticleBackground';
 import CustomCursor from './components/CustomCursor';
+import Team from './components/Team';
+
 
 function App() {
   return (
@@ -28,6 +30,7 @@ function App() {
           <Timeline />
           <Speakers />
           <HackathonRegister />
+          <Team />
           <Collaborate />
           <Footer />
         </div>

@@ -1,112 +1,124 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import robotVideo from '../assets/robot.mp4';
+import robotVideo from '../assets/robot2.mp4';
+
+const CountdownTimer = () => {
+  const calculateTimeLeft = () => {
+    const hackathonDate = new Date('2026-04-20T09:00:00');
+    const now = new Date();
+    const diff = hackathonDate - now;
+    if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    return {
+      days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((diff / (1000 * 60)) % 60),
+      seconds: Math.floor((diff / 1000) % 60),
+    };
+  };
+
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+  useEffect(() => {
+    const timer = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="grid grid-cols-4 gap-2 mt-6">
+      {[['DAYS', timeLeft.days], ['HRS', timeLeft.hours], ['MIN', timeLeft.minutes], ['SEC', timeLeft.seconds]].map(([label, value]) => (
+        <div key={label} className="flex flex-col items-center justify-center border border-blue-400/40 bg-blue-500/10 rounded-sm py-3 px-2">
+          <span className="font-orbitron font-black text-2xl md:text-3xl text-white tabular-nums">
+            {String(value).padStart(2, '0')}
+          </span>
+          <span className="font-rajdhani text-[0.5rem] tracking-[0.2em] text-blue-400 mt-1">{label}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const HackathonRegister = () => {
   const videoRef = useRef(null);
-  const sectionRef = useRef(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // User reached the section — play video
-            videoRef.current.currentTime = 0;
-            videoRef.current.play();
-          } else {
-            // User scrolled away — stop video
-            videoRef.current.pause();
-          }
-        });
-      },
-      { threshold: 0.4 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
+    if (videoRef.current) {
+      videoRef.current.play();
     }
-
-    return () => observer.disconnect();
   }, []);
 
   return (
     <section
-      ref={sectionRef}
       id="hackathon"
-      className="relative bg-black py-24 px-6 md:px-16 overflow-hidden"
+      className="relative bg-black overflow-hidden"
+      style={{ minHeight: '100vh' }}
     >
+      {/* VIDEO — full background */}
+      <div className="absolute inset-0 w-full h-full">
+        <video
+          ref={videoRef}
+          src={robotVideo}
+          muted
+          loop
+          playsInline
+          autoPlay
+          className="w-full h-full object-cover"
+          style={{
+            WebkitMaskImage: 'linear-gradient(to right, black 75%, transparent 100%)',
+            maskImage: 'linear-gradient(to right, black 75%, transparent 100%)',
+          }}
+        />
+        {/* Hide Veo watermark */}
+        <div className="absolute bottom-0 right-0 w-32 h-12 bg-black z-10" />
+        {/* Dark overlay for readability */}
+        <div className="absolute inset-0 bg-black/30" />
+      </div>
 
-      <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12 max-w-6xl mx-auto">
-
-        {/* LEFT — Hackathon Details */}
+      {/* CONTENT — overlapping on right */}
+      <div className="relative z-10 flex items-center justify-end min-h-screen px-6 md:px-16 py-24">
         <motion.div
-          initial={{ opacity: 0, x: -40 }}
+          initial={{ opacity: 0, x: 40 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          className="flex-1 max-w-lg"
+          className="w-full max-w-md backdrop-blur-sm bg-black/50 rounded-lg p-8 border border-blue-500/20"
         >
-          {/* Label */}
-          <span className="font-rajdhani text-hud-cyan tracking-[0.5em] text-xs uppercase">
+          <span className="font-rajdhani text-blue-400 tracking-[0.5em] text-xs uppercase">
             Main Event
           </span>
 
-          {/* Heading */}
-          <h2 className="font-orbitron text-white text-3xl md:text-5xl font-bold mt-3 tracking-widest leading-tight">
+          <h2 className="font-orbitron text-white text-3xl md:text-5xl font-bold mt-3 tracking-widest">
             HACKATHON
           </h2>
 
-          <div className="w-16 h-[2px] bg-gdg-red mt-4 mb-6" />
+          <div className="w-16 h-[2px] bg-blue-500 mt-4 mb-6" />
 
-          {/* Details */}
           <div className="space-y-3 font-rajdhani text-titanium text-sm md:text-base tracking-wide">
-            <p>🗓️ <span className="text-white font-bold">Date:</span> April 20, 2025</p>
+            <p>🗓️ <span className="text-white font-bold">Date:</span> April 20, 2026</p>
             <p>📍 <span className="text-white font-bold">Venue:</span> Bennett University, Greater Noida</p>
             <p>👥 <span className="text-white font-bold">Team Size:</span> 2–4 Members</p>
             <p>🏆 <span className="text-white font-bold">Prize Pool:</span> ₹50,000+</p>
-            <p className="text-ghost-white/70 text-xs md:text-sm leading-relaxed pt-2">
-              Build, innovate, and compete. A 24-hour hackathon where ideas meet execution. 
-              Open to all Bennett University students across all branches.
+            <p className="text-white/60 text-xs md:text-sm leading-relaxed pt-2">
+              Build, innovate, and compete. A 24-hour hackathon where ideas
+              meet execution. Open to all Bennett University students across
+              all branches.
             </p>
           </div>
 
-          {/* Register Button */}
+          <CountdownTimer />
+
           <motion.a
             href="https://your-registration-link.com"
             target="_blank"
             rel="noopener noreferrer"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
-            className="inline-block mt-8 bg-gdg-red text-white font-orbitron font-bold text-sm tracking-[0.3em] px-10 py-4 rounded-sm hover:bg-red-600 transition-colors shadow-lg shadow-gdg-red/30"
+            className="inline-block mt-8 w-full text-center text-white font-orbitron font-bold text-sm tracking-[0.3em] px-10 py-4 rounded-sm transition-all"
+            style={{
+              background: 'linear-gradient(135deg, #0ea5e9, #2563eb, #4f46e5)',
+              boxShadow: '0 0 30px rgba(59,130,246,0.6), 0 0 60px rgba(59,130,246,0.3)',
+            }}
           >
-            REGISTER NOW
+            REGISTER NOW →
           </motion.a>
         </motion.div>
-
-        {/* RIGHT — Video */}
-        <motion.div
-          initial={{ opacity: 0, x: 40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="flex-1 flex justify-end items-center"
-        >
-        <div className="relative overflow-hidden rounded-lg">
-          {/* Hides watermark at bottom */}
-          <div className="absolute bottom-0 left-0 w-full h-12 bg-black z-10" />
-          <video
-            ref={videoRef}
-            src={robotVideo}
-            muted
-            playsInline
-            className="w-full max-w-lg md:max-w-2xl rounded-lg"
-            style={{
-                WebkitMaskImage: 'radial-gradient(ellipse 80% 80% at 60% 50%, black 40%, transparent 100%)',
-                maskImage: 'radial-gradient(ellipse 80% 80% at 60% 50%, black 40%, transparent 100%)',
-            }}
-          />
-        </ div>
-        </motion.div>
-
       </div>
     </section>
   );
