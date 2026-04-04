@@ -4,8 +4,9 @@ import Navbar from './components/Navbar';
 import JetAnimation from './components/JetAnimation';
 import About from './components/About';
 import Timeline from './components/Timeline';
+import Speakers from './components/Speakers';
+import HackathonRegister from './components/HackathonRegister';
 import Collaborate from './components/Collaborate';
-import Contact from './components/Contact';
 import Footer from './components/Footer';
 import ParticleBackground from './components/ParticleBackground';
 import CustomCursor from './components/CustomCursor';
@@ -25,8 +26,9 @@ function App() {
         <div className="relative z-20 bg-void-black">
           <About />
           <Timeline />
+          <Speakers />
+          <HackathonRegister />
           <Collaborate />
-          <Contact />
           <Footer />
         </div>
       </motion.main>

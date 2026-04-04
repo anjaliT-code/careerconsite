@@ -19,7 +19,7 @@ const Navbar = () => {
         { name: 'ABOUT', href: '#about', color: 'bg-gdg-blue' },
         { name: 'TIMELINE', href: '#timeline', color: 'bg-gdg-purple' },
         { name: 'COLLABORATE', href: '#collaborate', color: 'bg-gdg-yellow' },
-        { name: 'CONTACT', href: '#contact', color: 'bg-gdg-red' },
+        
     ];
 
     return (
@@ -37,13 +37,24 @@ const Navbar = () => {
                         onError={(e) => { e.target.style.display = 'none'; }}
                     />
                 </div>
-
-                {/* Center: Title */}
-                <div className="absolute left-1/2 -translate-x-1/2 pointer-events-none md:pointer-events-auto">
+                {/* Center: GDG Logo + Titles */}
+                <div className="absolute left-1/2 -translate-x-1/2 pointer-events-none md:pointer-events-auto flex flex-col items-center">
+                    <img
+                        src="/assets/gdg-logo.png"
+                        alt="GDG Logo"
+                        className="w-6 h-6 md:w-8 md:h-8 mb-1"
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                    <span className="font-rajdhani text-hud-cyan tracking-[0.4em] text-[0.55rem] md:text-xs">
+                        GDG PRESENTS
+                    </span>
                     <h1 className="font-orbitron font-bold tracking-[0.4em] text-sm md:text-lg text-white">
                         CAREER CON 2.0
                     </h1>
                 </div>
+
+
+                
 
                 {/* Right: Desktop Links */}
                 <div className="hidden md:flex items-center space-x-6">
